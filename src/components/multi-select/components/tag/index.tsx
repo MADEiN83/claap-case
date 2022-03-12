@@ -8,6 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { EmailIcon } from "@chakra-ui/icons";
 
+import { useAppSelector } from "core/reducer";
+
 interface Props {
   disabled?: boolean;
   label: string;
@@ -17,6 +19,7 @@ interface Props {
 const Tag: React.FC<Props> = (props: Props) => {
   const { label, onRemove } = props;
   const isEmail = useMemo(() => label.includes("@"), [label]);
+  const loading = useAppSelector((state) => state.main.loading);
 
   return (
     <TagBase
@@ -40,7 +43,7 @@ const Tag: React.FC<Props> = (props: Props) => {
         />
       )}
       <TagLabel color="danger">{label}</TagLabel>
-      <TagCloseButton color="danger" onClick={onRemove} />
+      <TagCloseButton color="danger" onClick={onRemove} isDisabled={loading} />
     </TagBase>
   );
 };

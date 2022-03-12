@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormControl, useToast } from "@chakra-ui/react";
 import {
@@ -9,25 +10,50 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 
 import { searchUser, User } from "core/api/fake.api";
+import { setEmails } from "core/reducer/main/actions";
+import { useAppDispatch, useAppSelector } from "core/reducer";
 import SelectOption from "./components/select-option";
 import Tag from "./components/tag";
 import NewItem from "./components/new-item";
 import { filterWrongItems } from "./multi-select.utils";
 
-interface Props {}
+let debounce: any = null;
 
-const MultiSelect: React.FC<Props> = (props: Props) => {
+const MultiSelect: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const ref = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
+  const dispatch = useAppDispatch();
+  const loading = useAppSelector((state) => state.main.loading);
+
+  const handleOnUserInputChange = useCallback(() => {
+    clearTimeout(debounce);
+
+    debounce = setTimeout(() => {
+      const value = inputRef.current?.value || "";
+
+      searchUser(value).then((users) => {
+        setUsers(users);
+      });
+    }, 400);
+  }, []);
 
   useEffect(() => {
-    // TODO: finish this & handle user input
-    searchUser("t").then((users) => {
-      setUsers(users);
-    });
-  }, []);
+    /**
+     * The @choc-ui/chakra-autocomplete lib doesn't allow us
+     * to retrieve the input value.
+     *
+     * We need to find another way to get the value
+     * - change library
+     * - create custom multi-select
+     * - or fork the lib & made the update
+     */
+    inputRef.current?.addEventListener("input", handleOnUserInputChange);
+    return () => {
+      inputRef.current?.removeEventListener("input", handleOnUserInputChange);
+    };
+  }, [handleOnUserInputChange]);
 
   const filterSelection = useCallback(
     (value: string[], item: any) => {
@@ -40,6 +66,7 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
       if (wrongItems[0]) {
         toast({
           title: "Wrong format.",
+          // eslint-disable-next-line max-len
           description: `Please provide a valid email address (got '${wrongItems[0]}').`,
           status: "error",
           duration: 2000,
@@ -48,13 +75,13 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
       }
 
       const tempValue = value.filter((p) => !wrongItems.includes(p));
-      setSelectedUsers(tempValue);
+      dispatch(setEmails(tempValue));
     },
-    [filterWrongItems]
+    [filterWrongItems, dispatch]
   );
 
   return (
-    <FormControl bgColor="brand.900" color="white">
+    <FormControl bgColor="brand.900" color="white" isDisabled={loading}>
       <AutoComplete multiple creatable onChange={filterSelection} ref={ref}>
         <AutoCompleteInput
           variant="filled"
@@ -62,6 +89,8 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
           borderColor="brand.700"
           bg="brand.900"
           _hover={{ bg: "brand.900" }}
+          id="input"
+          ref={inputRef}
         >
           {({ tags }) => tags.map((tag) => <Tag key={tag.label} {...tag} />)}
         </AutoCompleteInput>
