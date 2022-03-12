@@ -10,26 +10,50 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 
 import { searchUser, User } from "core/api/fake.api";
+import { setEmails } from "core/reducer/main/actions";
 import { useAppDispatch, useAppSelector } from "core/reducer";
 import SelectOption from "./components/select-option";
 import Tag from "./components/tag";
 import NewItem from "./components/new-item";
 import { filterWrongItems } from "./multi-select.utils";
-import { setEmails } from "core/reducer/main/actions";
+
+let debounce: any = null;
 
 const MultiSelect: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const ref = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.main.loading);
 
-  useEffect(() => {
-    // TODO: finish this & handle user input
-    searchUser("t").then((users) => {
-      setUsers(users);
-    });
+  const handleOnUserInputChange = useCallback(() => {
+    clearTimeout(debounce);
+
+    debounce = setTimeout(() => {
+      const value = inputRef.current?.value || "";
+
+      searchUser(value).then((users) => {
+        setUsers(users);
+      });
+    }, 400);
   }, []);
+
+  useEffect(() => {
+    /**
+     * The @choc-ui/chakra-autocomplete lib doesn't allow us
+     * to retrieve the input value.
+     *
+     * We need to find another way to get the value
+     * - change library
+     * - create custom multi-select
+     * - or fork the lib & made the update
+     */
+    inputRef.current?.addEventListener("input", handleOnUserInputChange);
+    return () => {
+      inputRef.current?.removeEventListener("input", handleOnUserInputChange);
+    };
+  }, [handleOnUserInputChange]);
 
   const filterSelection = useCallback(
     (value: string[], item: any) => {
@@ -65,6 +89,8 @@ const MultiSelect: React.FC = () => {
           borderColor="brand.700"
           bg="brand.900"
           _hover={{ bg: "brand.900" }}
+          id="input"
+          ref={inputRef}
         >
           {({ tags }) => tags.map((tag) => <Tag key={tag.label} {...tag} />)}
         </AutoCompleteInput>
