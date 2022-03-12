@@ -12,6 +12,14 @@ const MembersForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
 
+  const displayUserFeedback = useCallback((args) => {
+    toast({
+      ...args,
+      duration: 2000,
+      isClosable: true,
+    });
+  }, []);
+
   const handleOnClick = useCallback(() => {
     if (loading) {
       return;
@@ -21,27 +29,23 @@ const MembersForm: React.FC = () => {
 
     sendInvites(emails)
       .then(() => {
-        toast({
+        displayUserFeedback({
           title: "Sent!",
           description: "Invites was successfully sent",
           status: "success",
-          duration: 2000,
-          isClosable: true,
         });
       })
       .catch((err) => {
-        toast({
+        displayUserFeedback({
           title: "Error",
           description: err.message,
           status: "error",
-          duration: 2000,
-          isClosable: true,
         });
       })
       .finally(() => {
         dispatch(setLoading(false));
       });
-  }, [emails]);
+  }, [emails, displayUserFeedback]);
 
   return (
     <Flex>
