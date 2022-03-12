@@ -1,0 +1,9 @@
+@import "../abstracts/variables";
+
+body {
+  font-size: $default-font-size;
+  color: $color-text;
+  font-weight: 400;
+  line-height: 1.7;
+  font-family: "Lato", sans-serif;
+}
