@@ -28,6 +28,18 @@ const normalize = (input: string): string => {
   return input.trim().toLowerCase();
 };
 
+// eslint-disable-next-line no-unused-vars
+export const sendInvites = async (emails: string[]): Promise<boolean> => {
+  await delay(200 + Math.random() * 200);
+
+  // Simulate backend error.
+  if (emails.filter((email) => email.includes("error")).length) {
+    throw new Error("Backend failed for some reasons.");
+  }
+
+  return true;
+};
+
 export const searchUser = async (input: string): Promise<User[]> => {
   const normalized = normalize(input);
 
