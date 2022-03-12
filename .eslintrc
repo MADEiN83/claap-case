@@ -1,0 +1,38 @@
+{
+  "env": {
+    "jest": true,
+    "browser": true,
+    "es6": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 13,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "plugins": ["react"],
+  "rules": {
+    "prefer-const": "warn",
+    "react/jsx-key": "error",
+    "no-duplicate-imports": "warn",
+    "no-duplicate-case": "error",
+    "no-console": "off",
+    "no-dupe-keys": "error",
+    "curly": "warn",
+    "no-empty": "off",
+    "no-unused-expressions": "warn",
+    "no-var": "warn",
+    "max-classes-per-file": "error",
+    "one-var-declaration-per-line": "warn",
+    "max-len": ["warn", { "code": 80, "ignorePattern": "(^import .*|<path)" }],
+    "max-lines": ["warn", 100],
+    "no-unused-vars": "warn",
+    "no-empty-function": "off",
+    "no-multiple-empty-lines": "warn",
+    "no-useless-constructor": "off",
+    "react/no-array-index-key": "error"
+  }
+}
