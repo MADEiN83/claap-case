@@ -2,11 +2,16 @@ import React, { useCallback, useMemo } from "react";
 import { Button, Flex, Box, useToast } from "@chakra-ui/react";
 
 import { sendInvites } from "core/api/fake.api";
-import { setLoading } from "core/reducer/main/actions";
+import { setEmails, setLoading } from "core/reducer/main/actions";
 import { useAppDispatch, useAppSelector } from "core/reducer";
 import MultiSelect from "components/multi-select";
 
-const MembersForm: React.FC = () => {
+interface Props {
+  onInvitesSent: () => void;
+}
+
+const MembersForm: React.FC<Props> = (props: Props) => {
+  const { onInvitesSent } = props;
   const { loading, emails } = useAppSelector((state) => state.main);
   const buttonIsDisabled = useMemo(() => loading || !emails.length, [emails]);
   const dispatch = useAppDispatch();
@@ -31,9 +36,11 @@ const MembersForm: React.FC = () => {
       .then(() => {
         displayUserFeedback({
           title: "Sent!",
-          description: "Invites was successfully sent",
+          description: `Invites was successfully sent to: ${emails.join(", ")}`,
           status: "success",
         });
+        onInvitesSent();
+        dispatch(setEmails([]));
       })
       .catch((err) => {
         displayUserFeedback({

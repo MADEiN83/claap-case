@@ -74,10 +74,24 @@ const MultiSelect: React.FC = () => {
         });
       }
 
-      const tempValue = value.filter((p) => !wrongItems.includes(p));
+      const tempValue = value
+        .filter((p) => !wrongItems.includes(p))
+        .map((value) => {
+          if (value.includes("@")) {
+            return value;
+          }
+
+          const [firstName, lastName] = value.split(" ");
+          const user = users.find(
+            (user) => user.firstName === firstName && user.lastName === lastName
+          );
+
+          return user?.email || value;
+        });
+
       dispatch(setEmails(tempValue));
     },
-    [filterWrongItems, dispatch]
+    [filterWrongItems, dispatch, users]
   );
 
   return (
