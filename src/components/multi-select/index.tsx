@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FormControl } from "@chakra-ui/react";
+import { FormControl, useToast } from "@chakra-ui/react";
 import {
   AutoComplete,
   AutoCompleteCreatable,
@@ -20,6 +20,7 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const ref = useRef<any>(null);
+  const toast = useToast();
 
   useEffect(() => {
     // TODO: finish this & handle user input
@@ -35,6 +36,16 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
       wrongItems.forEach((item) => {
         ref.current?.removeItem(item);
       });
+
+      if (wrongItems[0]) {
+        toast({
+          title: "Wrong format.",
+          description: `Please provide a valid email address (got '${wrongItems[0]}').`,
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
 
       const tempValue = value.filter((p) => !wrongItems.includes(p));
       setSelectedUsers(tempValue);
