@@ -1,9 +1,15 @@
 import React from "react";
 
+import { Button } from "components";
+
 interface Props {}
 
 const Home: React.FC<Props> = (props: Props) => {
-  return <div>Content of Home goes here</div>;
+  return (
+    <div>
+      <Button>Invite teammates</Button>
+    </div>
+  );
 };
 
 export default Home;
