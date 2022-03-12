@@ -1,20 +1,27 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Button, Flex, Box } from "@chakra-ui/react";
 
+import { useAppDispatch, useAppSelector } from "core/reducer";
 import MultiSelect from "components/multi-select";
+import { setLoading } from "core/reducer/main/actions";
 
-interface Props {}
+const MembersForm: React.FC = () => {
+  const { loading, emails } = useAppSelector((state) => state.main);
+  const buttonIsDisabled = useMemo(() => loading || !emails.length, [emails]);
+  const dispatch = useAppDispatch();
 
-const MembersForm: React.FC<Props> = (props: Props) => {
+  const sendInvites = useCallback(() => {
+    if (loading) {
+      return;
+    }
+
+    console.log("là", emails);
+    dispatch(setLoading(true));
+  }, [emails]);
+
   return (
     <Flex>
       <Box flex="1">
-        {/* <Input
-          bg="brand.900"
-          borderColor="brand.700"
-          placeholder="Search names or emails..."
-        /> */}
-
         <MultiSelect />
       </Box>
       <Box pl="4">
@@ -25,7 +32,9 @@ const MembersForm: React.FC<Props> = (props: Props) => {
           py="2.5"
           borderRadius="10"
           fontSize="13px"
-          onClick={() => {}}
+          onClick={sendInvites}
+          disabled={buttonIsDisabled}
+          isLoading={loading}
         >
           Invite
         </Button>

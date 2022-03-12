@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormControl, useToast } from "@chakra-ui/react";
 import {
@@ -9,18 +10,19 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 
 import { searchUser, User } from "core/api/fake.api";
+import { useAppDispatch, useAppSelector } from "core/reducer";
 import SelectOption from "./components/select-option";
 import Tag from "./components/tag";
 import NewItem from "./components/new-item";
 import { filterWrongItems } from "./multi-select.utils";
+import { setEmails } from "core/reducer/main/actions";
 
-interface Props {}
-
-const MultiSelect: React.FC<Props> = (props: Props) => {
+const MultiSelect: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const ref = useRef<any>(null);
   const toast = useToast();
+  const dispatch = useAppDispatch();
+  const loading = useAppSelector((state) => state.main.loading);
 
   useEffect(() => {
     // TODO: finish this & handle user input
@@ -40,6 +42,7 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
       if (wrongItems[0]) {
         toast({
           title: "Wrong format.",
+          // eslint-disable-next-line max-len
           description: `Please provide a valid email address (got '${wrongItems[0]}').`,
           status: "error",
           duration: 2000,
@@ -48,13 +51,13 @@ const MultiSelect: React.FC<Props> = (props: Props) => {
       }
 
       const tempValue = value.filter((p) => !wrongItems.includes(p));
-      setSelectedUsers(tempValue);
+      dispatch(setEmails(tempValue));
     },
-    [filterWrongItems]
+    [filterWrongItems, dispatch]
   );
 
   return (
-    <FormControl bgColor="brand.900" color="white">
+    <FormControl bgColor="brand.900" color="white" isDisabled={loading}>
       <AutoComplete multiple creatable onChange={filterSelection} ref={ref}>
         <AutoCompleteInput
           variant="filled"
