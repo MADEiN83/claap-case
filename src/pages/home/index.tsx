@@ -1,15 +1,24 @@
 import React from "react";
+import { useDisclosure } from "@chakra-ui/hooks";
+import { Center } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
 
-import { Button } from "components";
+import { withLayout } from "HOC";
+import { InviteModal } from "components";
 
-interface Props {}
+const Home: React.FC = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-const Home: React.FC<Props> = (props: Props) => {
   return (
-    <div>
-      <Button>Invite teammates</Button>
-    </div>
+    <>
+      <Center h="100vh">
+        <Button colorScheme="blue" onClick={onOpen}>
+          Invite teammates
+        </Button>
+      </Center>
+      <InviteModal isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 
-export default Home;
+export default withLayout(Home);
