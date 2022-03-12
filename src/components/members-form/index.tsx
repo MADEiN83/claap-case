@@ -62,6 +62,7 @@ const MembersForm: React.FC<Props> = (props: Props) => {
       <Box pl="4">
         <Button
           bg="primary"
+          _hover={{ bg: "primaryHover" }}
           color="white"
           px="22.5"
           py="2.5"

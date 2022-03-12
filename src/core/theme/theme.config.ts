@@ -7,6 +7,7 @@ const colors = {
     700: "#383C56",
   },
   primary: "#2C54EA",
+  primaryHover: "#4164e0",
   danger: "#EE748F",
   grey: {
     base: "#8C9DB5",
