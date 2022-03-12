@@ -34,7 +34,7 @@ const InviteModal: React.FC<Props> = (props: Props) => {
             Send members an email invitation to join this workspace
           </Text>
 
-          <MembersForm />
+          <MembersForm onInvitesSent={onClose} />
         </ModalBody>
       </ModalContent>
     </Modal>
